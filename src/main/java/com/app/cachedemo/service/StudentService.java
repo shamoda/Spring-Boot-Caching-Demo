@@ -3,6 +3,9 @@ package com.app.cachedemo.service;
 import com.app.cachedemo.model.Student;
 import com.app.cachedemo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,24 +20,40 @@ public class StudentService {
         this.repository = repository;
     }
 
+    // inserting new record
     public Student addNewStudent(Student student) {
         return repository.save(student);
     }
 
-    public List<Student> findAllStudents() throws InterruptedException {
+    // find existing record
+    @Cacheable(cacheNames = {"studentCache"}, key = "#studentId")
+    public Student findStudent(Long studentId) {
         // simulating backend querying delay
         simulateBackendCall();
-        return repository.findAll();
+        return repository.findById(studentId).get();
     }
 
-    public String deleteStudent(Long id) {
-        repository.deleteById(id);
+    // updating existing record
+    @CachePut(cacheNames = {"studentCache"}, key="#student.studentId")
+    public Student updateStudent(Student student) {
+        return repository.save(student);
+    }
+
+    // deleting existing record
+    @CacheEvict(cacheNames = {"studentCache"}, key = "#studentId")
+    public String deleteStudent(Long studentId) {
+        repository.deleteById(studentId);
         return "record deleted successfully";
     }
 
-    public void simulateBackendCall() throws InterruptedException {
-        System.out.println("------------- Going to sleep for 5 seconds to simulate Backend Delay -----------");
-        Thread.sleep(5 * 1000);
+    // this method will pause main thread for 5 seconds
+    public void simulateBackendCall() {
+        try {
+            System.out.println("------------- Going to sleep for 5 seconds to simulate Backend Delay -----------");
+            Thread.sleep(5 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

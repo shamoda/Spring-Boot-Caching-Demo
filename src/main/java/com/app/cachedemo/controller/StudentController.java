@@ -24,9 +24,14 @@ public class StudentController {
         return new ResponseEntity<>(service.addNewStudent(student), HttpStatus.CREATED);
     }
 
-    @GetMapping("/student")
-    public ResponseEntity<?> retriveAllStudents() throws InterruptedException {
-        return new ResponseEntity<>(service.findAllStudents(), HttpStatus.OK);
+    @GetMapping("/student/{id}")
+    public ResponseEntity<?> retriveAllStudents(@PathVariable Long id) {
+        return new ResponseEntity<>(service.findStudent(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/student")
+    public ResponseEntity<?> updateStudent(@RequestBody Student student) {
+        return new ResponseEntity<>(service.updateStudent(student), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/student/{id}")
