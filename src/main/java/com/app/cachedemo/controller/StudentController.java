@@ -25,7 +25,7 @@ public class StudentController {
     }
 
     @GetMapping("/student")
-    public ResponseEntity<?> retriveAllStudents() {
+    public ResponseEntity<?> retriveAllStudents() throws InterruptedException {
         return new ResponseEntity<>(service.findAllStudents(), HttpStatus.OK);
     }
 

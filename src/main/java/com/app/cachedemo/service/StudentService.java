@@ -21,13 +21,20 @@ public class StudentService {
         return repository.save(student);
     }
 
-    public List<Student> findAllStudents() {
+    public List<Student> findAllStudents() throws InterruptedException {
+        // simulating backend querying delay
+        simulateBackendCall();
         return repository.findAll();
     }
 
     public String deleteStudent(Long id) {
         repository.deleteById(id);
         return "record deleted successfully";
+    }
+
+    public void simulateBackendCall() throws InterruptedException {
+        System.out.println("------------- Going to sleep for 5 seconds to simulate Backend Delay -----------");
+        Thread.sleep(5 * 1000);
     }
 
 }
